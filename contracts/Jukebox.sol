@@ -11,6 +11,8 @@ contract Jukebox {
 
   Video[] public videoChain;
 
+  event QueueUpdated(string videoUrl, uint startTime, uint timeDuration);
+
   function addToQueue(string _videoUrl, uint _timeDuration) 
   payable public
   {
@@ -37,6 +39,7 @@ contract Jukebox {
         startTime: startTime
       });  
 
+    emit QueueUpdated(newVideo.videoUrl);
     videoChain.push(newVideo);
   } 
 
