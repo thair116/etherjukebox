@@ -16,7 +16,7 @@ const ytSearchResults = ({ results, contract, accounts }) => {
                                 <span>{result.description}</span>
                             </Col>
                             <Col xs={12} md={2}>
-                                <Button bsStyle="primary" onClick={() => contract.setVideoUrl(result.id, { from: accounts[0] })}>Request</Button>
+                                <Button bsStyle="primary" onClick={() => contract.addToQueue(result.id, 60, { from: accounts[0] })}>Request</Button>
                             </Col>
                         </Row>
                     );

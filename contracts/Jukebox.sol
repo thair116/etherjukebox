@@ -3,16 +3,55 @@ pragma solidity ^0.4.24;
 contract Jukebox {
   string videoUrl;
 
-  event SongChanged(string videoUrl);
-
-  function setVideoUrl(string _videoUrl) payable public {
-    // TODO: make pay certain amount
-    videoUrl = _videoUrl;
-    emit SongChanged(_videoUrl);
+  struct Video {
+    string videoUrl;
+    uint startTime;
+    uint timeDuration;
   }
 
-  function getVideoUrl() public view returns (string) {
-    return videoUrl;
+  Video[] public videoChain;
+
+  function addToQueue(string _videoUrl, uint _timeDuration) 
+  payable public
+  {
+    uint startTime;
+    if (videoChain.length > 0) {
+      Video endOfQueue = videoChain[videoChain.length-1];
+
+      if (now > endOfQueue.startTime + endOfQueue.timeDuration) {
+        // we have a gap, start the new video
+        startTime = now;
+      } else {
+        // no gap, play later
+        startTime = endOfQueue.startTime + endOfQueue.timeDuration;
+      }
+    } else {
+      // first video, start now
+      startTime = now;
+    }
+
+    Video memory newVideo = Video(
+      {
+        videoUrl: _videoUrl,
+        timeDuration: _timeDuration * 1 seconds,
+        startTime: startTime
+      });  
+
+    videoChain.push(newVideo);
+  } 
+
+  function chainItem(uint index)
+  public view
+  returns (string videoUrl, uint startTime, uint timeDuration)
+  {
+    return (videoChain[index].videoUrl, videoChain[index].startTime, videoChain[index].timeDuration);
+  }
+
+  function chainLength()
+  public view
+  returns (uint length)
+  {
+    return videoChain.length;
   }
 }
 
