@@ -74,7 +74,7 @@ class App extends Component {
     this.setState({ currentSong: songToPlay });
 
     setTimeout(() => {
-      this.getAllSongs()
+      this.getSongToPlay()
     }, howLongToPlay)
 
   }
