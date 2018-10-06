@@ -1,5 +1,7 @@
 import React from 'react';
 import { Row, Col, Image, Button } from 'react-bootstrap';
+import YouTube from 'simple-youtube-api';
+const youtube = new YouTube('AIzaSyAEDEgyQ3YB5l3SiHnXgJvwJDvFuK6jAWY');
 
 const ytSearchResults = ({ results, contract, accounts }) => {
     return (
@@ -16,7 +18,14 @@ const ytSearchResults = ({ results, contract, accounts }) => {
                                 <span>{result.description}</span>
                             </Col>
                             <Col xs={12} md={2}>
-                                <Button bsStyle="primary" onClick={() => contract.addToQueue(result.id, 60, { from: accounts[0] })}>Request</Button>
+                                <Button bsStyle="primary" onClick={async () => {
+                                    const videoInfo = await youtube.getVideoByID(result.id);
+                                    const duration = videoInfo.durationSeconds;
+
+                                    console.log(`adding ${result.id} to queue with ${duration} duration`);
+                                    contract.addToQueue(result.id, duration, { from: accounts[0] })
+                                    }
+                                }>Request</Button>
                             </Col>
                         </Row>
                     );
