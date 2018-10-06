@@ -6,6 +6,7 @@ contract Jukebox {
   event SongChanged(string videoUrl);
 
   function setVideoUrl(string _videoUrl) payable public {
+    // TODO: make pay certain amount
     videoUrl = _videoUrl;
     emit SongChanged(_videoUrl);
   }
@@ -14,3 +15,5 @@ contract Jukebox {
     return videoUrl;
   }
 }
+
+// TODO: Send funds to contract owner

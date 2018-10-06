@@ -2,26 +2,33 @@ import React, { Component } from "react";
 import Jukebox from "./contracts/Jukebox.json";
 import getWeb3 from "./utils/getWeb3";
 import truffleContract from "truffle-contract";
+import PlayList from "./components/playlist";
+import {Row, Col} from "react-flexbox-grid";
+import { Button, Image } from 'react-bootstrap';
+import ReactPlayer from 'react-player';
+import ytSearch from 'youtube-search';
+import YTSearchResults from './components/yt-search-results';
+
 
 import "./App.css";
 
+const ytOptions = {
+  maxResults: 10,
+  key: 'AIzaSyAEDEgyQ3YB5l3SiHnXgJvwJDvFuK6jAWY'
+};
+
 class App extends Component {
-  state = { web3: null, accounts: null, contract: null };
+  state = { web3: null, accounts: null, contract: null, ytSearchResults: [] };
 
   componentDidMount = async () => {
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
-      console.log('web3: ', web3);
 
       // Use web3 to get the user's accounts.
-      let accounts;
-      web3.eth.getAccounts((test1, test2) => {
-        accounts = test2;
-        console.log('test1: ', test1);
-        console.log('test2: ', test2);
-      });
+      const accounts = await web3.eth.accounts;
       console.log('accounts: ', accounts);
+      console.log('web3.eth: ', web3.eth);
 
       // Get the contract instance.
       const Contract = truffleContract(Jukebox);
@@ -29,9 +36,6 @@ class App extends Component {
       const instance = await Contract.deployed();
       console.log('instance: ', instance);
       instance.SongChanged({}, { fromBlock: 0, toBlock: 'latest' }).watch((error, result) => {
-        console.log("on watch");
-        console.log('error: ', error);
-        console.log('result: ', result);
         // change the current song from the result of the event
         this.setState({ currentSong: result.args.videoUrl });
       });
@@ -48,38 +52,61 @@ class App extends Component {
     }
   };
 
-
   runExample = async () => {
     const { contract } = this.state;
     const response = await contract.getVideoUrl();
-    console.log('hits getVideoUrl');
-
     // Update state with the result.
     this.setState({ currentSong: response });
   };
 
   render() {
     const { accounts, contract } = this.state;
-    console.log('contract: ', contract)
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
+        // <div>The stored value is: {this.state.storageValue}</div>
+    let mainPlayerStyle = {
+      margin: 'auto',
+    };
+
     return (
       <div className="App">
-      blah blah blah
-        <div>
-          <iframe title="jukebox-video" width="863" height="647" src={`https://www.youtube.com/embed/${this.state.currentSong}?autoplay=1`} frameBorder="0" allow="autoplay" allowFullScreen></iframe>
-        </div>
-
-        <div>{this.state.currentSong}</div>
-
-      <input type="text" value={this.state.userInput} onChange={(val, test) => {
-        console.log('userInput val: ', val.target.value)
-        this.setState({userInput: val.target.value})
-        }} />
-        <button onClick={() => {
-          contract.setVideoUrl(this.state.userInput, { from: accounts[0] });
-        }}>Submit</button>
+        <h1>ETH Jukebox</h1>
+        <p>Pay 1 eth to run the jukebox!</p>
+        <Row>
+          <Col xs={12}>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            try {
+              const searchResults = await ytSearch(this.state.searchInput, ytOptions);
+              console.log('searchResults: ', searchResults);
+              this.setState({ ytSearchResults: searchResults.results });
+            } catch(e) {
+              console.log('yt search error: ', e);
+              this.setState({ searchError: e });
+            }
+          }}>
+            <input onChange={(e) => { this.setState({ searchInput: e.target.value })}} />
+              <Button type="submit" bsStyle="default">Search</Button>
+            </form>
+          </Col>
+        </Row>
+        <Row>
+          <Col lg={9} >
+            this is main player area
+            <Row>
+            <Col lg={2} />
+            <Col lg={8} >
+              <ReactPlayer url={`https://www.youtube.com/watch?v=${this.state.currentSong}`} style={mainPlayerStyle} playing />
+            </Col>
+            <Col lg={1} />
+            </Row>
+          </Col>
+          <Col lg={1} >
+            <PlayList/>
+          </Col>
+        </Row>
+        <YTSearchResults results={this.state.ytSearchResults} contract={this.state.contract} accounts={this.state.accounts} />
       </div>
     );
   }
