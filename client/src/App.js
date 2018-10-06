@@ -1,25 +1,40 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
+import Jukebox from "./contracts/Jukebox.json";
 import getWeb3 from "./utils/getWeb3";
 import truffleContract from "truffle-contract";
 
 import "./App.css";
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  state = { web3: null, accounts: null, contract: null };
 
   componentDidMount = async () => {
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
+      console.log('web3: ', web3);
 
       // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
+      let accounts;
+      web3.eth.getAccounts((test1, test2) => {
+        accounts = test2;
+        console.log('test1: ', test1);
+        console.log('test2: ', test2);
+      });
+      console.log('accounts: ', accounts);
 
       // Get the contract instance.
-      const Contract = truffleContract(SimpleStorageContract);
+      const Contract = truffleContract(Jukebox);
       Contract.setProvider(web3.currentProvider);
       const instance = await Contract.deployed();
+      console.log('instance: ', instance);
+      instance.SongChanged({}, { fromBlock: 0, toBlock: 'latest' }).watch((error, result) => {
+        console.log("on watch");
+        console.log('error: ', error);
+        console.log('result: ', result);
+        // change the current song from the result of the event
+        this.setState({ currentSong: result.args.videoUrl });
+      });
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -33,36 +48,38 @@ class App extends Component {
     }
   };
 
+
   runExample = async () => {
-    const { accounts, contract } = this.state;
-
-    // Stores a given value, 5 by default.
-    await contract.set(5, { from: accounts[0] });
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.get();
+    const { contract } = this.state;
+    const response = await contract.getVideoUrl();
+    console.log('hits getVideoUrl');
 
     // Update state with the result.
-    this.setState({ storageValue: response.toNumber() });
+    this.setState({ currentSong: response });
   };
 
   render() {
+    const { accounts, contract } = this.state;
+    console.log('contract: ', contract)
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
       <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 37</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+      blah blah blah
+        <div>
+          <iframe title="jukebox-video" width="863" height="647" src={`https://www.youtube.com/embed/${this.state.currentSong}?autoplay=1`} frameBorder="0" allow="autoplay" allowFullScreen></iframe>
+        </div>
+
+        <div>{this.state.currentSong}</div>
+
+      <input type="text" value={this.state.userInput} onChange={(val, test) => {
+        console.log('userInput val: ', val.target.value)
+        this.setState({userInput: val.target.value})
+        }} />
+        <button onClick={() => {
+          contract.setVideoUrl(this.state.userInput, { from: accounts[0] });
+        }}>Submit</button>
       </div>
     );
   }
