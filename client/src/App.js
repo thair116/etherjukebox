@@ -2,23 +2,25 @@ import React, { Component } from "react";
 import Jukebox from "./contracts/Jukebox.json";
 import getWeb3 from "./utils/getWeb3";
 import truffleContract from "truffle-contract";
-import PlayList from "./components/playlist";
+import UpNextQueue from "./components/up-next-queue";
 import {Row, Col} from "react-flexbox-grid";
-import { Button, Image } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
 import ytSearch from 'youtube-search';
 import YTSearchResults from './components/yt-search-results';
+import Header from './components/Header';
 
 
 import "./App.css";
 
 const ytOptions = {
   maxResults: 10,
-  key: 'AIzaSyAEDEgyQ3YB5l3SiHnXgJvwJDvFuK6jAWY'
+  key: 'AIzaSyAEDEgyQ3YB5l3SiHnXgJvwJDvFuK6jAWY',
+  videoEmbeddable: true
 };
 
 class App extends Component {
-  state = { web3: null, accounts: null, contract: null, ytSearchResults: [] };
+  state = { web3: null, accounts: null, contract: null, ytSearchResults: [], videoIds: ['c8rJxxHJIPg', 'OekWK7LorMw', 'jrGupGguAPo'] };
 
   componentDidMount = async () => {
     try {
@@ -67,12 +69,13 @@ class App extends Component {
         // <div>The stored value is: {this.state.storageValue}</div>
     let mainPlayerStyle = {
       margin: 'auto',
+      height: '100%',
+      width: '100%'
     };
 
     return (
       <div className="App">
-        <h1>ETH Jukebox</h1>
-        <p>Pay 1 eth to run the jukebox!</p>
+        <Header />
         <Row>
           <Col xs={12}>
           <form onSubmit={async (e) => {
@@ -92,21 +95,14 @@ class App extends Component {
           </Col>
         </Row>
         <Row>
-          <Col lg={9} >
-            this is main player area
-            <Row>
-            <Col lg={2} />
-            <Col lg={8} >
-              <ReactPlayer url={`https://www.youtube.com/watch?v=${this.state.currentSong}`} style={mainPlayerStyle} playing />
-            </Col>
-            <Col lg={1} />
-            </Row>
+          <Col xs={12} lg={9} >
+            <ReactPlayer url={`https://www.youtube.com/watch?v=${this.state.currentSong}`} style={mainPlayerStyle} playing />
           </Col>
-          <Col lg={1} >
-            <PlayList/>
+          <Col xs={12} lg={3} >
+            <UpNextQueue videoIds={this.state.videoIds}/>
           </Col>
         </Row>
-        <YTSearchResults results={this.state.ytSearchResults} contract={this.state.contract} accounts={this.state.accounts} />
+        <YTSearchResults results={this.state.ytSearchResults} contract={contract} accounts={accounts} />
       </div>
     );
   }
