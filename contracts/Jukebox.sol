@@ -39,7 +39,7 @@ contract Jukebox {
         startTime: startTime
       });  
 
-    emit QueueUpdated(newVideo.videoUrl);
+    emit QueueUpdated(newVideo.videoUrl, newVideo.timeDuration, newVideo.startTime);
     videoChain.push(newVideo);
   } 
 

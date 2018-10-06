@@ -16,11 +16,12 @@ import "./App.css";
 const ytOptions = {
   maxResults: 10,
   key: 'AIzaSyAEDEgyQ3YB5l3SiHnXgJvwJDvFuK6jAWY',
-  videoEmbeddable: true
+  videoEmbeddable: true,
+  type: 'video'
 };
 
 class App extends Component {
-  state = { web3: null, accounts: null, contract: null, ytSearchResults: [], videoIds: ['c8rJxxHJIPg', 'OekWK7LorMw', 'jrGupGguAPo'] };
+  state = { web3: null, accounts: null, contract: null, ytSearchResults: [], videoIds: [] };
 
   componentDidMount = async () => {
     try {
@@ -37,6 +38,15 @@ class App extends Component {
       Contract.setProvider(web3.currentProvider);
       const instance = await Contract.deployed();
       console.log('instance: ', instance);
+
+      instance.QueueUpdated({}, { fromBlock: 0, toBlock: 'latest' }).watch((error, result) => {
+        console.log('QueueUpdated result: ', result)
+        // change the current song from the result of the event
+        const videoIds = this.state.videoIds;
+        videoIds.push(result.args.videoUrl);
+        console.log('videoIds: ', videoIds);
+        this.setState({ videoIds: videoIds });
+      });
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -61,19 +71,21 @@ class App extends Component {
 
     let songToPlay;
     let howLongToPlay;
+    let videoIds = [];
     for (const [url, startTime, duration] of results) {
 
         const startTimeObj = new Date(startTime.toNumber()*1000);
         const whenToSwitch = new Date(startTime.toNumber()*1000 + duration.toNumber()*1000)
         if (startTimeObj < new Date()) {
           songToPlay = url;
+          videoIds.push(url);
           howLongToPlay = duration.toNumber()*1000;
           console.log('played or playing:', url, startTimeObj.toLocaleTimeString(), whenToSwitch.toLocaleTimeString())
         } else { 
           console.log('queued:', url, startTimeObj.toLocaleTimeString(), whenToSwitch.toLocaleTimeString())
         }
     }
-    this.setState({ currentSong: songToPlay });
+    this.setState({ currentSong: songToPlay, videoIds: videoIds });
 
     setTimeout(() => {
       this.getSongToPlay()

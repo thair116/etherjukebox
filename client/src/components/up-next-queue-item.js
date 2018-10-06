@@ -6,19 +6,27 @@ import Error from './Error';
 
 const youTubeApiRequestString = (videoId) => `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=AIzaSyAEDEgyQ3YB5l3SiHnXgJvwJDvFuK6jAWY&part=snippet,contentDetails,status`
 
+const axiosOptions = {
+	headers: { 'Access-Control-Allow-Origin': '*' }
+}
+
 class UpNextQueueItem extends Component {
 	state = { loading: true, videoDetails: null }
 
 	componentDidMount() {
 		const { videoId } = this.props;
-		axios.get(youTubeApiRequestString(videoId), { crossDomain: true }, (err, videoDetails) => {
+		console.log('hits componentDidMount: ', videoId);
+		console.log('xxx: ', youTubeApiRequestString(videoId));
+		axios({ ...axiosOptions, url: youTubeApiRequestString(videoId), method: 'get' }, { crossDomain: true })
+		.then((videoDetails) => {
+			console.log('videoDetails: ', videoDetails.data.items);
+			this.setState({ loading: false, videoDetails: videoDetails.data.items[0].snippet });
+		})
+		
+		
+		.catch((err) => {
 			console.log('err: ', err);
-			console.log('videoDetails: ', videoDetails);
-			if(err) {
-				this.setState({ error: true, errorMessage: err });
-				return;
-			 }
-			this.setState({ loading: false, videoDetails: videoDetails });
+			this.setState({ error: true, errorMessage: err });
 		});
 	}
 
@@ -30,7 +38,7 @@ class UpNextQueueItem extends Component {
 			this.state.error ? <Error message={this.state.errorMessage} /> :
 			<Row>
 				<Col xs={3}>
-					<Image src={videoDetails.thumbnails.medium.url} />
+					<Image src={videoDetails.thumbnails.medium.url} responsive rounded />
 				</Col>
 				<Col xs={9}>
 					{videoDetails.title}
