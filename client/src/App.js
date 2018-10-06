@@ -3,6 +3,8 @@ import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./utils/getWeb3";
 import truffleContract from "truffle-contract";
 import PlayList from "./playlist";
+import {Row, Col} from "react-flexbox-grid";
+import ReactPlayer from 'react-player';
 
 
 import "./App.css";
@@ -53,11 +55,29 @@ class App extends Component {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
         // <div>The stored value is: {this.state.storageValue}</div>
+    let mainPlayerStyle = {
+      margin: 'auto',
+    };
+
     return (
       <div className="App">
         <h1>ETH Jukebox</h1>
         <p>Pay 1 eth to run the jukebox!</p>
-        <PlayList/>
+        <Row>
+          <Col lg={9} >
+            this is main player area
+            <Row>
+            <Col lg={2} />
+            <Col lg={8} >
+              <ReactPlayer url='https://www.youtube.com/watch?v=7wXD5ab2VVQ' style={mainPlayerStyle} playing />
+            </Col>
+            <Col lg={1} />
+            </Row>
+          </Col>
+          <Col lg={1} >
+            <PlayList/>
+          </Col>
+        </Row>
       </div>
     );
   }
