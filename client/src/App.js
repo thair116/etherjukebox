@@ -37,14 +37,10 @@ class App extends Component {
       Contract.setProvider(web3.currentProvider);
       const instance = await Contract.deployed();
       console.log('instance: ', instance);
-      instance.SongChanged({}, { fromBlock: 0, toBlock: 'latest' }).watch((error, result) => {
-        // change the current song from the result of the event
-        this.setState({ currentSong: result.args.videoUrl });
-      });
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      this.setState({ web3, accounts, contract: instance }, this.getSongToPlay);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -54,19 +50,42 @@ class App extends Component {
     }
   };
 
-  runExample = async () => {
+  async getSongToPlay() {
     const { contract } = this.state;
-    const response = await contract.getVideoUrl();
-    // Update state with the result.
-    this.setState({ currentSong: response });
-  };
+    const length = await contract.chainLength();
+    const indexesToRetrieve = [...Array(length.toNumber()).keys()]
+
+    const functions = indexesToRetrieve.map(index => contract.chainItem(index))
+    let results = await Promise.all(functions)
+
+
+    let songToPlay;
+    let howLongToPlay;
+    for (const [url, startTime, duration] of results) {
+
+        const startTimeObj = new Date(startTime.toNumber()*1000);
+        const whenToSwitch = new Date(startTime.toNumber()*1000 + duration.toNumber()*1000)
+        if (startTimeObj < new Date()) {
+          songToPlay = url;
+          howLongToPlay = duration.toNumber()*1000;
+          console.log('played or playing:', url, startTimeObj.toLocaleTimeString(), whenToSwitch.toLocaleTimeString())
+        } else { 
+          console.log('queued:', url, startTimeObj.toLocaleTimeString(), whenToSwitch.toLocaleTimeString())
+        }
+    }
+    this.setState({ currentSong: songToPlay });
+
+    setTimeout(() => {
+      this.getSongToPlay()
+    }, howLongToPlay)
+
+  }
 
   render() {
     const { accounts, contract } = this.state;
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
-        // <div>The stored value is: {this.state.storageValue}</div>
     let mainPlayerStyle = {
       margin: 'auto',
       height: '100%',
