@@ -70,6 +70,11 @@ const AppContainer = styled.div`
     padding: 0 5px;
 }
 `
+const PlayerContainer = styled(Col)`
+  iframe {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 4px 15px;
+  }
+`
 class App extends Component {
   state = { 
     web3: null, 
@@ -163,7 +168,7 @@ class App extends Component {
     let mainPlayerStyle = {
       margin: 'auto',
       height: '100%',
-      width: '100%'
+      width: '100%',
     };
 
     return (
@@ -174,7 +179,7 @@ class App extends Component {
           </Col>
         </HeaderContainer>
         <Row>
-          <Col xs={12} lg={9} >
+          <PlayerContainer xs={12} lg={9} >
             <Media query="(max-width: 600px)">
               {matches =>
                         matches ? (
@@ -184,7 +189,7 @@ class App extends Component {
                         )
                     }
                 </Media>
-          </Col>
+          </PlayerContainer>
           <Queue xs={12} lg={3} >
             <UpNextQueue videoIds={this.state.videoIds}/>
           </Queue>
