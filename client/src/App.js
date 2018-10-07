@@ -71,8 +71,10 @@ const AppContainer = styled.div`
 }
 `
 const PlayerContainer = styled(Col)`
-  iframe {
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 4px 15px;
+  @media only screen and (min-width: 601px) {
+      iframe {
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 4px 15px;
+    }
   }
 `
 class App extends Component {
@@ -116,7 +118,9 @@ class App extends Component {
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`
+        `Failed to load web3, accounts, or contract. Check console for details.
+
+        Make sure you have web3 in your browser and are connected to the ropsten testnet`
       );
       console.log(error);
     }
