@@ -72,7 +72,7 @@ const ytSearchResults = ({ results, contract, accounts }) => {
                                     const duration = videoInfo.durationSeconds;
 
                                     console.log(`adding ${result.id} to queue with ${duration} duration`);
-                                    contract.addToQueue(result.id, duration, { from: accounts[0] })
+                                    contract.addToQueue.sendTransaction(result.id, duration, { from: accounts[0], value: 20000000000000000})
                                     }
                                 }>Play next &rarr;</RequestButton>
                             </RequestContainer>

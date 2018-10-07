@@ -22,7 +22,7 @@ const Header = () => {
     return (
     <div>
         <Title>ETH Jukebox</Title>
-        <SubText>Put in <CrossOut>a quarter</CrossOut> gas fees to run the Jukebox!</SubText>
+        <SubText>Run the Jukebox for the price of a cup of coffee!</SubText>
     </div>
 
     )
