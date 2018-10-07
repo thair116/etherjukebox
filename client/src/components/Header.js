@@ -1,11 +1,18 @@
 import React from 'react';
+import styled from 'styled-components';
 
+const Title = styled.h1`
+    font-family: 'Monoton', cursive;
+`
+const SubText = styled.p`
+    color: #444;
+`
 const Header = () => {
     return (
-    <React.Fragment>
-        <h1>ETH Jukebox</h1>
+    <div>
+        <Title>ETH Jukebox</Title>
         <p>Pay 1 eth to run the jukebox!</p>
-    </React.Fragment>
+    </div>
 
     )
 }

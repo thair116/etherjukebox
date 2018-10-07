@@ -9,6 +9,7 @@ import ReactPlayer from 'react-player';
 import ytSearch from 'youtube-search';
 import YTSearchResults from './components/yt-search-results';
 import Header from './components/Header';
+import styled from 'styled-components';
 
 
 import "./App.css";
@@ -20,6 +21,39 @@ const ytOptions = {
   type: 'video'
 };
 
+// #fafafa
+const Input = styled.input`
+    width: 420px;
+    height: 50px;
+    margin: 20px 20px 20px 0;
+    border-radius: 3px;
+    border: none;
+    padding: 0 15px;
+    font-size: 1.5em;
+    background-color: #efefef;
+`
+const SearchButton = styled(Button)`
+  height: 50px;
+  width: 100px;
+  margin: 0;
+  font-size: 1.3em;
+`
+const Queue = styled(Col)`
+  background-color:#fefefe;
+`
+
+const HeaderContainer = styled(Row)`
+  margin-bottom:40px;
+  border-bottom: 2px solid #e7e7e7;
+  background-color:white;
+`
+
+const SearchContainer = styled(Col)`
+  text-align:center;
+  border-bottom: 2px solid #e7e7e7;
+  padding-bottom:30px;
+  margin-bottom:30px;
+`
 class App extends Component {
   state = { 
     web3: null, 
@@ -115,34 +149,38 @@ class App extends Component {
 
     return (
       <div className="App">
-        <Header />
-        <Row>
+        <HeaderContainer>
           <Col xs={12}>
-          <form onSubmit={async (e) => {
-            e.preventDefault();
-            try {
-              const searchResults = await ytSearch(this.state.searchInput, ytOptions);
-              console.log('searchResults: ', searchResults);
-              this.setState({ ytSearchResults: searchResults.results });
-            } catch(e) {
-              console.log('yt search error: ', e);
-              this.setState({ searchError: e });
-            }
-          }}>
-            <input onChange={(e) => { this.setState({ searchInput: e.target.value })}} />
-              <Button type="submit" bsStyle="default">Search</Button>
-            </form>
+            <Header />
           </Col>
-        </Row>
+        </HeaderContainer>
         <Row>
           <Col xs={12} lg={9} >
             <ReactPlayer url={`https://www.youtube.com/watch?v=${this.state.currentSong}&t=${this.state.timeToSkip}`} style={mainPlayerStyle} playing />
           </Col>
-          <Col xs={12} lg={3} >
+          <Queue xs={12} lg={3} >
             <UpNextQueue videoIds={this.state.videoIds}/>
-          </Col>
+          </Queue>
         </Row>
-        <YTSearchResults results={this.state.ytSearchResults} contract={contract} accounts={accounts} />
+        <Row>
+          <SearchContainer xs={12} lg={9} >
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                const searchResults = await ytSearch(this.state.searchInput, ytOptions);
+                console.log('searchResults: ', searchResults);
+                this.setState({ ytSearchResults: searchResults.results });
+              } catch(e) {
+                console.log('yt search error: ', e);
+                this.setState({ searchError: e });
+              }
+            }}>
+              <Input onChange={(e) => { this.setState({ searchInput: e.target.value })}} />
+              <SearchButton type="submit" bsStyle="default">Search</SearchButton>
+            </form>
+          </SearchContainer>
+          </Row>
+          <YTSearchResults results={this.state.ytSearchResults} contract={contract} accounts={accounts} />
       </div>
     );
   }
