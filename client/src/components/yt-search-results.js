@@ -38,7 +38,7 @@ const ytSearchResults = ({ currentSong, avoidIds, results, contract, accounts })
         <Row>
             <Col xs={12} lg={9}>
                 {results.map((result, index) => {
-                    if(currentSong == result.id || avoidIds.includes(result.id)) {
+                    if(avoidIds.length > 4 ||currentSong == result.id || avoidIds.includes(result.id)) {
                         return (
                             <Result key={result.id}>
                                 <Col xs={12} md={3}>
