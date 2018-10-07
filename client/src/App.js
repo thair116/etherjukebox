@@ -118,15 +118,18 @@ class App extends Component {
 
         const startTimeObj = new Date(startTime.toNumber()*1000);
         const whenToSwitch = new Date(startTime.toNumber()*1000 + duration.toNumber()*1000);
-        if (startTimeObj < new Date()) {
-          songToPlay = url;
-          howLongToPlay = whenToSwitch - new Date();
-          timeToSkip = parseInt((new Date() - startTimeObj)/1000);
-          console.log('played or playing:', url, startTimeObj.toLocaleTimeString(), whenToSwitch.toLocaleTimeString())
-        } else { 
-          videoIds.push(url);
-          console.log('queued:', url, startTimeObj.toLocaleTimeString(), whenToSwitch.toLocaleTimeString())
+        if (whenToSwitch > new Date()) {
+          if (startTimeObj < new Date()) {
+            songToPlay = url;
+            howLongToPlay = whenToSwitch - new Date();
+            timeToSkip = parseInt((new Date() - startTimeObj)/1000);
+            console.log('played or playing:', url, startTimeObj.toLocaleTimeString(), whenToSwitch.toLocaleTimeString())
+          } else { 
+            videoIds.push(url);
+            console.log('queued:', url, startTimeObj.toLocaleTimeString(), whenToSwitch.toLocaleTimeString())
+          }
         }
+        
     }
     this.setState({ currentSong: songToPlay, timeToSkip, videoIds: videoIds });
 
