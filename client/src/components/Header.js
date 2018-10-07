@@ -15,11 +15,14 @@ const SubText = styled.p`
         text-align:center;
     }
 `
+const CrossOut = styled.span`
+    text-decoration:line-through;
+`
 const Header = () => {
     return (
     <div>
         <Title>ETH Jukebox</Title>
-        <SubText>Pay 1 milliether to run the jukebox!</SubText>
+        <SubText>Put in <CrossOut>a quarter</CrossOut> gas fees to run the Jukebox!</SubText>
     </div>
 
     )
