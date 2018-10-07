@@ -88,9 +88,10 @@ class App extends Component {
     videoIds: [] };
 
   componentDidMount = async () => {
+    let web3;
     try {
       // Get network provider and web3 instance.
-      const web3 = await getWeb3();
+      web3 = await getWeb3();
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
