@@ -21,7 +21,14 @@ const ytOptions = {
 };
 
 class App extends Component {
-  state = { web3: null, accounts: null, contract: null, ytSearchResults: [], videoIds: [] };
+  state = { 
+    web3: null, 
+    accounts: null, 
+    contract: null, 
+    currentSong: null,
+    timeToSkip: 0,
+    ytSearchResults: [], 
+    videoIds: [] };
 
   componentDidMount = async () => {
     try {
@@ -39,7 +46,7 @@ class App extends Component {
       const instance = await Contract.deployed();
       console.log('instance: ', instance);
 
-      instance.QueueUpdated({}, { fromBlock: 0, toBlock: 'latest' }).watch((error, result) => {
+      instance.QueueUpdated({}).watch((error, result) => {
         console.log('QueueUpdated result: ', result)
         // change the current song from the result of the event
         const videoIds = this.state.videoIds;
@@ -72,20 +79,22 @@ class App extends Component {
     let songToPlay;
     let howLongToPlay;
     let videoIds = [];
+    let timeToSkip;
     for (const [url, startTime, duration] of results) {
 
         const startTimeObj = new Date(startTime.toNumber()*1000);
-        const whenToSwitch = new Date(startTime.toNumber()*1000 + duration.toNumber()*1000)
+        const whenToSwitch = new Date(startTime.toNumber()*1000 + duration.toNumber()*1000);
         if (startTimeObj < new Date()) {
           songToPlay = url;
-          videoIds.push(url);
-          howLongToPlay = duration.toNumber()*1000;
+          howLongToPlay = whenToSwitch - new Date();
+          timeToSkip = parseInt((new Date() - startTimeObj)/1000);
           console.log('played or playing:', url, startTimeObj.toLocaleTimeString(), whenToSwitch.toLocaleTimeString())
         } else { 
+          videoIds.push(url);
           console.log('queued:', url, startTimeObj.toLocaleTimeString(), whenToSwitch.toLocaleTimeString())
         }
     }
-    this.setState({ currentSong: songToPlay, videoIds: videoIds });
+    this.setState({ currentSong: songToPlay, timeToSkip, videoIds: videoIds });
 
     setTimeout(() => {
       this.getSongToPlay()
@@ -127,7 +136,7 @@ class App extends Component {
         </Row>
         <Row>
           <Col xs={12} lg={9} >
-            <ReactPlayer url={`https://www.youtube.com/watch?v=${this.state.currentSong}`} style={mainPlayerStyle} playing />
+            <ReactPlayer url={`https://www.youtube.com/watch?v=${this.state.currentSong}&t=${this.state.timeToSkip}`} style={mainPlayerStyle} playing />
           </Col>
           <Col xs={12} lg={3} >
             <UpNextQueue videoIds={this.state.videoIds}/>
