@@ -33,12 +33,27 @@ const Details = styled(Col)`
     }
 `
 
-const ytSearchResults = ({ results, contract, accounts }) => {
+const ytSearchResults = ({ currentSong, avoidIds, results, contract, accounts }) => {
     return (
         <Row>
             <Col xs={12} lg={9}>
                 {results.map((result, index) => {
-                    return (
+                    if(currentSong == result.id || avoidIds.includes(result.id)) {
+                        return (
+                            <Result key={result.id}>
+                                <Col xs={12} md={3}>
+                                    <Image src={result.thumbnails.medium.url} responsive />
+                                </Col>
+                                <Details xs={12} md={3}>
+                                    <Title>{result.title}</Title>
+                                    <span>{result.channelTitle}</span>
+                                </Details>
+                                <RequestContainer xs={12} md={2}>
+                                </RequestContainer>
+                            </Result>
+                            );
+                    } else {
+                        return (
                         <Result key={result.id}>
                             <Col xs={12} md={3}>
                                 <Image src={result.thumbnails.medium.url} responsive />
@@ -54,11 +69,13 @@ const ytSearchResults = ({ results, contract, accounts }) => {
 
                                     console.log(`adding ${result.id} to queue with ${duration} duration`);
                                     contract.addToQueue(result.id, duration, { from: accounts[0] })
-                                    }
-                                }>Request</RequestButton>
+                                }}>
+                                Request
+                                </RequestButton>
                             </RequestContainer>
                         </Result>
-                    );
+                        )
+                    }
                 })}
             </Col>
         </Row>

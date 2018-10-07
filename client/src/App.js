@@ -183,7 +183,7 @@ class App extends Component {
             </form>
           </SearchContainer>
           </Row>
-          <YTSearchResults results={this.state.ytSearchResults} contract={contract} accounts={accounts} />
+          <YTSearchResults currentSong={this.state.currentSong} avoidIds={this.state.videoIds} results={this.state.ytSearchResults} contract={contract} accounts={accounts} />
       </div>
     );
   }
