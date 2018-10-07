@@ -11,6 +11,10 @@ const Title = styled.h3`
     width:100%;
     padding:0 0 10px;
     margin:0;
+
+    @media only screen and (max-width: 600px) {
+        padding: 10px 10px 10px;
+    }
 `
 const Container = styled(Row)`
     

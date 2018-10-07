@@ -8,6 +8,11 @@ const Result = styled(Row)`
     margin:20px;
     display:flex;
     justify-content:center;
+
+    @media only screen and (max-width: 600px) {
+        border-bottom: 2px solid #e7e7e7;
+        padding-bottom:10px;
+    }
 `
 const RequestButton = styled(Button)`
     background-color: #fc0d1b !important;
@@ -16,6 +21,13 @@ const RequestButton = styled(Button)`
     height:50px;
     width:150px;
     font-size:1.3em;
+
+    @media only screen and (max-width: 600px) {
+        margin: 10px auto;
+        width:50%;
+        border-radius: 50px;
+        height:45px;
+    }
 `
 const Title = styled.h3`
     margin:0 0 5px;
@@ -31,8 +43,15 @@ const Details = styled(Col)`
     span {
         color:#555;
     }
+    @media only screen and (max-width: 600px) {
+        margin:0;
+    }
 `
-
+const Thumbnail = styled(Image)`
+    @media only screen and (max-width: 600px) {
+        height:100px;
+    }
+`
 const ytSearchResults = ({ results, contract, accounts }) => {
     return (
         <Row>
@@ -40,10 +59,10 @@ const ytSearchResults = ({ results, contract, accounts }) => {
                 {results.map((result, index) => {
                     return (
                         <Result key={result.id}>
-                            <Col xs={12} md={3}>
-                                <Image src={result.thumbnails.medium.url} responsive />
+                            <Col xs={6} md={3}>
+                                <Thumbnail src={result.thumbnails.medium.url} responsive />
                             </Col>
-                            <Details xs={12} md={3}>
+                            <Details xs={6} md={3}>
                                 <Title>{result.title}</Title>
                                 <span>{result.channelTitle}</span>
                             </Details>
@@ -55,7 +74,7 @@ const ytSearchResults = ({ results, contract, accounts }) => {
                                     console.log(`adding ${result.id} to queue with ${duration} duration`);
                                     contract.addToQueue(result.id, duration, { from: accounts[0] })
                                     }
-                                }>Request</RequestButton>
+                                }>Play next &rarr;</RequestButton>
                             </RequestContainer>
                         </Result>
                     );

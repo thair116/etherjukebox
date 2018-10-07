@@ -10,6 +10,7 @@
     "react-bootstrap": "^0.32.4",
     "react-dom": "^16.4.2",
     "react-flexbox-grid": "^2.1.2",
+    "react-media": "^1.8.0",
     "react-player": "^1.6.6",
     "react-scripts": "1.1.4",
     "simple-youtube-api": "^5.0.2",

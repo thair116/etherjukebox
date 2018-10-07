@@ -13,6 +13,7 @@ const axiosOptions = {
 
 const Item = styled(Row)`
 	margin: 10px 0;
+	padding:10px;
 `
 class UpNextQueueItem extends Component {
 	state = { loading: true, videoDetails: null }

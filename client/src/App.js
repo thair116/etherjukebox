@@ -10,6 +10,7 @@ import ytSearch from 'youtube-search';
 import YTSearchResults from './components/yt-search-results';
 import Header from './components/Header';
 import styled from 'styled-components';
+import Media from 'react-media';
 
 
 import "./App.css";
@@ -31,6 +32,10 @@ const Input = styled.input`
     padding: 0 15px;
     font-size: 1.5em;
     background-color: #efefef;
+
+    @media only screen and (max-width: 600px) {
+        width:100%;
+    }
 `
 const SearchButton = styled(Button)`
   height: 50px;
@@ -53,6 +58,17 @@ const SearchContainer = styled(Col)`
   border-bottom: 2px solid #e7e7e7;
   padding-bottom:30px;
   margin:30px 0 30px;
+
+  @media only screen and (max-width: 600px) {
+    margin:15px 0 15px;
+  }
+`
+const AppContainer = styled.div`
+  padding: 0 25px;
+
+  @media only screen and (max-width: 600px) {
+    padding: 0 5px;
+}
 `
 class App extends Component {
   state = { 
@@ -151,7 +167,7 @@ class App extends Component {
     };
 
     return (
-      <div className="App">
+      <AppContainer>
         <HeaderContainer>
           <Col xs={12}>
             <Header />
@@ -159,7 +175,15 @@ class App extends Component {
         </HeaderContainer>
         <Row>
           <Col xs={12} lg={9} >
-            <ReactPlayer url={`https://www.youtube.com/watch?v=${this.state.currentSong}&t=${this.state.timeToSkip}`} style={mainPlayerStyle} playing />
+            <Media query="(max-width: 600px)">
+              {matches =>
+                        matches ? (
+                          <ReactPlayer url={`https://www.youtube.com/watch?v=${this.state.currentSong}&t=${this.state.timeToSkip}`} width="375" height="375" style={mainPlayerStyle} playing />
+                        ) : (
+                        <ReactPlayer url={`https://www.youtube.com/watch?v=${this.state.currentSong}&t=${this.state.timeToSkip}`} style={mainPlayerStyle} playing />
+                        )
+                    }
+                </Media>
           </Col>
           <Queue xs={12} lg={3} >
             <UpNextQueue videoIds={this.state.videoIds}/>
@@ -178,13 +202,13 @@ class App extends Component {
                 this.setState({ searchError: e });
               }
             }}>
-              <Input onChange={(e) => { this.setState({ searchInput: e.target.value })}} />
+              <Input placeholder="choose the next video" onChange={(e) => { this.setState({ searchInput: e.target.value })}} />
               <SearchButton type="submit" bsStyle="default">Search</SearchButton>
             </form>
           </SearchContainer>
           </Row>
           <YTSearchResults results={this.state.ytSearchResults} contract={contract} accounts={accounts} />
-      </div>
+      </AppContainer>
     );
   }
 }
