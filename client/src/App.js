@@ -91,7 +91,17 @@ class App extends Component {
     try {
       // Get network provider and web3 instance.
       const web3 = await getWeb3();
+    } catch (error) {
+      // Catch any errors for any of the above operations.
+      alert(
+        `Failed to load web3 Check console for details.
 
+        Make sure you have web3 in your browser and are connected to the ropsten testnet`
+      );
+      console.log(error);
+    }
+
+    try {
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.accounts;
       console.log('accounts: ', accounts);
@@ -118,7 +128,7 @@ class App extends Component {
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
-        `Failed to load web3, accounts, or contract. Check console for details.
+        `Failed to load accounts. You can still view but you cannot post. 
 
         Make sure you have web3 in your browser and are connected to the ropsten testnet`
       );
