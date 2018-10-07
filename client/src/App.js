@@ -52,7 +52,7 @@ const SearchContainer = styled(Col)`
   text-align:center;
   border-bottom: 2px solid #e7e7e7;
   padding-bottom:30px;
-  margin-bottom:30px;
+  margin:30px 0 30px;
 `
 class App extends Component {
   state = { 
