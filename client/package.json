@@ -5,14 +5,13 @@
   "dependencies": {
     "bignumber.js": "^7.2.1",
     "connext": "^2.5.9",
-    "eslint": "^5.6.1",
     "react": "^16.4.2",
     "react-bootstrap": "^0.32.4",
     "react-dom": "^16.4.2",
     "react-flexbox-grid": "^2.1.2",
     "react-media": "^1.8.0",
     "react-player": "^1.6.6",
-    "react-scripts": "1.1.4",
+    "react-scripts": "2.0.3",
     "simple-youtube-api": "^5.0.2",
     "styled-components": "^3.4.9",
     "truffle-contract": "^3.0.6",
@@ -30,5 +29,11 @@
   },
   "devDependencies": {
     "run-script-os": "^1.0.3"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
