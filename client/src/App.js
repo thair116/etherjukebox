@@ -101,7 +101,7 @@ class App extends Component {
       );
       console.log(error);
     }
-
+    
     try {
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.accounts;
@@ -133,6 +133,10 @@ class App extends Component {
 
         Make sure you have web3 in your browser and are connected to the ropsten testnet`
       );
+      const Contract = truffleContract(Jukebox);
+      Contract.setProvider(web3.currentProvider);
+      const instance = await Contract.deployed();
+      this.setState({ web3, contract: instance }, this.getSongToPlay);
       console.log(error);
     }
   };
